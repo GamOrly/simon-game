@@ -1,7 +1,7 @@
 import type { SimonColor } from './colors';
 import { MAX_ROUNDS } from './constants';
 
-export type GameStatus = 'idle' | 'presenting' | 'awaitingInput' | 'won' | 'lost';
+export type GameStatus = 'idle' | 'presenting' | 'awaitingInput' | 'paused' | 'won' | 'lost';
 
 export type GameState = {
   status: GameStatus;
@@ -19,7 +19,8 @@ export type GameAction =
   | { type: 'press'; color: SimonColor; nextColor: SimonColor }
   | { type: 'showNextRound'; presentationId: number }
   | { type: 'presentationDone'; presentationId: number }
-  | { type: 'abandon' }
+  | { type: 'pause' }
+  | { type: 'resume' }
   | { type: 'dismiss' };
 
 export const initialGameState: GameState = {
@@ -87,14 +88,23 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       return { ...state, status: 'awaitingInput', inputIndex: 0 };
 
-    // Temporary until Milestone 3: leaving to About cancels the game (ADR-3)
-    case 'abandon':
+    // Partial input is dropped; the sequence and round are kept (ADR-3).
+    // Pausing between rounds lands on the next round, since the finished
+    // one was already completed (ADR-11).
+    case 'pause':
       if (!isGameActive(state)) return state;
       return {
-        ...initialGameState,
-        gameId: state.gameId,
+        ...state,
+        status: 'paused',
+        inputIndex: 0,
+        round: state.sequence.length,
         presentationId: state.presentationId + 1,
       };
+
+    // Replays the full sequence of the same round, no new color
+    case 'resume':
+      if (state.status !== 'paused') return state;
+      return { ...state, status: 'presenting', inputIndex: 0, presentationId: state.presentationId + 1 };
 
     case 'dismiss':
       if (state.status !== 'won' && state.status !== 'lost') return state;

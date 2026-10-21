@@ -26,8 +26,8 @@ export function useGame() {
   const stateRef = useRef(state);
   stateRef.current = state;
   const pressRef = useRef<Press | null>(null);
-  const startToken = useRef(0); // invalidates a pending start (audio unlock in progress)
-  const starting = useRef(false);
+  const unlockToken = useRef(0); // invalidates a pending start/resume (audio unlock in progress)
+  const unlocking = useRef(false);
 
   const endPress = useCallback(() => {
     const press = pressRef.current;
@@ -115,31 +115,53 @@ export function useGame() {
     [endPress],
   );
 
-  const startGame = useCallback(() => {
-    if (stateRef.current.status !== 'idle' || starting.current) return;
-    starting.current = true;
-    const token = ++startToken.current;
+  // Start and resume both unlock audio from the click gesture first (autoplay policy)
+  const unlockThen = useCallback((action: () => void) => {
+    unlocking.current = true;
+    const token = ++unlockToken.current;
 
-    // Called synchronously inside the click handler (autoplay policy)
     void unlockAudio().then((ok) => {
-      starting.current = false;
-      if (token !== startToken.current) return;
+      if (token !== unlockToken.current) return;
+      unlocking.current = false;
       setAudioError(!ok);
-      // Never start a silent game that pretends sound is playing
-      if (ok) dispatch({ type: 'start', firstColor: randomColor() });
+      // Never present a silent sequence that pretends sound is playing
+      if (ok) action();
     });
   }, []);
 
-  // Temporary until Milestone 3: leaving to About cancels an active game
-  const abandon = useCallback(() => {
-    startToken.current++;
-    starting.current = false;
+  const startGame = useCallback(() => {
+    if (stateRef.current.status !== 'idle' || unlocking.current) return;
+    unlockThen(() => dispatch({ type: 'start', firstColor: randomColor() }));
+  }, [unlockThen]);
+
+  const resumeGame = useCallback(() => {
+    if (stateRef.current.status !== 'paused' || unlocking.current) return;
+    unlockThen(() => dispatch({ type: 'resume' }));
+  }, [unlockThen]);
+
+  // Single pause entry point: navigation to About, hidden page, pagehide (ADR-3)
+  const pause = useCallback(() => {
+    unlockToken.current++;
+    unlocking.current = false;
     endPress();
     if (!isGameActive(stateRef.current)) return;
     stopAll();
     setActiveColor(null);
-    dispatch({ type: 'abandon' });
+    dispatch({ type: 'pause' });
   }, [endPress]);
+
+  // Returning to the page does nothing: resuming is always manual
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') pause();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pagehide', pause);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pagehide', pause);
+    };
+  }, [pause]);
 
   const dismiss = useCallback(() => {
     setResultVisible(false);
@@ -147,7 +169,7 @@ export function useGame() {
     dispatch({ type: 'dismiss' });
   }, []);
 
-  return { state, activeColor, resultVisible, audioError, startGame, padDown, padUp, abandon, dismiss };
+  return { state, activeColor, resultVisible, audioError, startGame, resumeGame, pause, padDown, padUp, dismiss };
 }
 
 export type Game = ReturnType<typeof useGame>;

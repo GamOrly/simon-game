@@ -12,7 +12,7 @@ export function App() {
 
   const navigate = (next: Screen) => {
     if (next === screen) return;
-    if (next === 'about') game.abandon();
+    if (next === 'about') game.pause();
     setScreen(next);
     window.scrollTo(0, 0);
   };
