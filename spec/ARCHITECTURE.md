@@ -195,7 +195,7 @@ type HistoryData = {
 
 **נתיב פריסה:**
 
-- ה-Repository של הפרויקט נקרא `Simon` ויושב בחשבון ה-GitHub של המשתמש, `https://github.com/<user>/Simon` (את `<user>` קח מכתובת ה-remote של ה-repo המקומי), ולכן כתובת ה-Production היא `https://<user>.github.io/Simon/` ויש לקבוע `base: "/Simon/"` ב-Vite. הנתיב **רגיש לאותיות גדולות וקטנות** – `Simon` ב-S גדולה, בדיוק כשם ה-Repository.
+- ה-Repository של הפרויקט נקרא `simon-game` ויושב בחשבון ה-GitHub של המשתמש, `https://github.com/GamOrly/simon-game`, ולכן כתובת ה-Production היא `https://gamorly.github.io/simon-game/` ויש לקבוע `base: "/simon-game/"` ב-Vite. הנתיב בכתובת האתר **רגיש לאותיות גדולות וקטנות** – `simon-game` באותיות קטנות, בדיוק כשם ה-Repository.
 - GitHub Pages בחשבון GitHub Free זמין ל-Repository **ציבורי** בלבד. לפני פריסה ראשונה יש לוודא שה-Repository ציבורי (Settings → General → Danger Zone → Change visibility), או שהחשבון בתוכנית בתשלום.
 - באופן כללי, לפרויקט המתארח ב-`https://<user>.github.io/<repo>/` קובעים `base: "/<repo>/"` ב-Vite. התאמה מקבילה של `start_url`, `scope`, קישורי Assets ו-Service Worker Scope; לא להשתמש בנתיבים מוחלטים ל-`/` שמדלגים על שם ה-Repository.
 - לאתר Root או Custom Domain הנתיב עשוי להיות `/`. יש להגדיר אותו לפי כתובת ה-Production האמיתית. [2]
@@ -229,6 +229,8 @@ type HistoryData = {
 
 ## החלטות מרכזיות (ADRs)
 
+> ההחלטות שלהלן התקבלו מראש, לפני תחילת הבנייה, ומנחות אותה. במהלך הבנייה מוסיפים כאן ADRs חדשים לפי הצורך.
+
 ### ADR-1: לוח ה-Simon כ-CSS Grid עם ארבעה כפתורי `button`
 **הקשר:** סעיף 2.4 מתיר CSS Grid/clip-path או SVG ללוח. נדרשים כפתורים סמנטיים ונגישים, אזור מגע מלא לכל רבע, וסידור צבעים מרחבי שאינו מתהפך ב-RTL.
 **החלטה:** הלוח הוא מיכל עגול עם CSS Grid בגודל 2×2; כל רבע הוא `<button>` עם `aria-label` בעברית ופינה חיצונית מעוגלת (רבע עיגול), ופסי ההפרדה הם ה-`gap` של הגריד. המיכל מוגדר `direction: ltr` ומיקום כל רבע נקבע ב-`grid-area` מפורש לפי `src/game/colors.ts`. הדיסק המרכזי הוא שכבה דקורטיבית ללא קלט.
@@ -242,7 +244,7 @@ type HistoryData = {
 ### ADR-3: השהיה כמצב `paused` ב-Reducer, וחידוש כהצגה חדשה
 **הקשר:** מעבר ל"אודות", הסתרת האפליקציה או נעילת הטלפון צריכים לעצור מיד הארה, צליל ו-Timers, לשמור את השלב בזיכרון, ולא לחדש אוטומטית. Callbacks של הצגה שבוטלה אסור שישנו את המצב.
 **החלטה:** ה-Action `pause` (רק מ-`presenting`/`awaitingInput`) מעביר ל-`paused`, מאפס את `inputIndex` ומעלה את `presentationId`, כך שסיום Playback מיושן מתעלם. `resume` (רק מ-`paused`) הוא כניסה רגילה ל-`presenting` עם `presentationId` חדש, אותו רצף ואותו שלב, ונשלח רק אחרי `unlockAudio()` מוצלח מתוך הלחיצה על "המשך משחק" (בכשל נשארים מושהים עם הודעה). ניווט ל"אודות", `visibilitychange` ל-`hidden` ו-`pagehide` קוראים כולם לאותה פונקציית `pause` ב-`useGame`; חזרה ל-`visible` לא עושה דבר. משחק שהסתיים (`won`/`lost`) או לא התחיל אינו מושפע.
-**השלכות:** מנגנון ביטול אחד (`AbortController` + `presentationId`) משרת השהיה, סיום ומעבר שלב. Action `abandon` הזמני של Milestone 2 הוסר. מצב מושהה חי בזיכרון בלבד, ולכן Refresh מאפס אותו.
+**השלכות:** מנגנון ביטול אחד (`AbortController` + `presentationId`) משרת השהיה, סיום ומעבר שלב. ב-Milestone 2 קיימת התנהגות זמנית של ביטול משחק במעבר ל"אודות" (Action `abandon`), שמוחלפת ב-`pause` ב-Milestone 3 ו-`abandon` מוסר. מצב מושהה חי בזיכרון בלבד, ולכן Refresh מאפס אותו.
 
 ### ADR-4: היסטוריה – Repository טהור ו-Hook ב-`App`, שמירה עם Guard לפי `gameId`
 **הקשר:** כל משחק שהסתיים צריך להישמר פעם אחת בלבד (גם ב-React Strict Mode, שמריץ Effects פעמיים), ה-Reducer אסור שייגע באחסון, מסך "אודות" צריך להציג מיד תוצאה חדשה, וכשל ב-`localStorage` אסור שיחסום משחק או ייראה כהצלחה.
@@ -264,12 +266,12 @@ type HistoryData = {
 **החלטה:** `public/icon.svg` נכתב ידנית (לוח בקוטר ~78% מהקנבס, בתוך ה-Safe Zone של Maskable, על רקע `#0A1628`). הקבצים `pwa-64/192/512`, `maskable-icon-512x512`, `apple-touch-icon-180x180` ו-`favicon.ico` נוצרים ממנו ב-`npm run generate-pwa-assets` (`@vite-pwa/assets-generator`, תצורה ב-`pwa-assets.config.ts`) ונשמרים ב-`public/`.
 **השלכות:** ה-CI אינו תלוי בכלי ההמרה. שינוי באייקון = עריכת ה-SVG והרצת הסקריפט מחדש.
 
-### ADR-8: `base: "/Simon/"` בכל הסביבות
-**הקשר:** האתר נפרס תחת `https://<user>.github.io/Simon/`, ובעיות נתיב (404 לנכסים, Scope של Service Worker) מתגלות בדרך כלל רק בפריסה.
-**החלטה:** `base: '/Simon/'` ב-`vite.config.ts` גם ב-dev וגם ב-preview; `start_url` ו-`scope` של ה-Manifest נגזרים מאותו קבוע. ה-Workflow `.github/workflows/deploy.yml` מריץ typecheck, בדיקות ו-Build לפני פריסה ל-Pages.
-**השלכות:** הכתובת המקומית היא `http://localhost:5173/Simon/` (dev) ו-`http://localhost:4173/Simon/` (preview). אם ה-Repository ישנה שם או יעבור ל-Custom Domain, יש לעדכן את הקבוע.
+### ADR-8: `base: "/simon-game/"` בכל הסביבות
+**הקשר:** האתר נפרס תחת `https://gamorly.github.io/simon-game/`, ובעיות נתיב (404 לנכסים, Scope של Service Worker) מתגלות בדרך כלל רק בפריסה.
+**החלטה:** `base: '/simon-game/'` ב-`vite.config.ts` גם ב-dev וגם ב-preview; `start_url` ו-`scope` של ה-Manifest נגזרים מאותו קבוע. ה-Workflow `.github/workflows/deploy.yml` מריץ typecheck, בדיקות ו-Build לפני פריסה ל-Pages.
+**השלכות:** הכתובת המקומית היא `http://localhost:5173/simon-game/` (dev) ו-`http://localhost:4173/simon-game/` (preview). אם ה-Repository ישנה שם או יעבור ל-Custom Domain, יש לעדכן את הקבוע.
 
 ### ADR-9: שם התקנה `Simon` ו-`id` מפורש ב-Manifest
-**הקשר:** ב-Chrome לאנדרואיד הופיעה הודעה שהאפליקציה "כבר מותקנת" למרות שלא הותקנה, ופתיחתה נכשלה ("Could not open app"), גם אחרי ניקוי נתוני האתר. ללא `id`, הדפדפן מזהה את האפליקציה לפי `start_url`, ולכן רישום התקנה ישן ושגוי במכשיר נצמד לאותה כתובת. המשתמש ביקש גם ששם האפליקציה המותקנת יהיה באנגלית.
-**החלטה:** הוספת `id: '/Simon/app'` ל-Manifest, ושינוי `name`/`short_name` ל-`Simon`. כותרת המסך ו-`<title>` נשארים "סיימון".
-**השלכות:** הדפדפן רואה את האפליקציה כזהות חדשה ומתעלם מרישום ישן. אסור לשנות את ה-`id` בעתיד, אחרת התקנות קיימות ייחשבו לאפליקציה אחרת.
+**הקשר:** ללא `id` מפורש, הדפדפן מזהה אפליקציה מותקנת לפי `start_url`, ובמקרים מסוימים (למשל ב-Chrome לאנדרואיד) רישום התקנה ישן או שגוי נצמד לאותה כתובת ויכול למנוע פתיחה. המשתמש ביקש גם ששם האפליקציה המותקנת יהיה באנגלית.
+**החלטה:** הגדרת `id: '/simon-game/app'` ב-Manifest מההתחלה, ו-`name`/`short_name` הם `Simon`. כותרת המסך ו-`<title>` נשארים "סיימון".
+**השלכות:** זהות האפליקציה יציבה ואינה תלויה ב-`start_url`. אסור לשנות את ה-`id` בעתיד, אחרת התקנות קיימות ייחשבו לאפליקציה אחרת.
