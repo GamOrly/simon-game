@@ -116,7 +116,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  min-height: 52px;
+  min-height: 60px;
   padding: 6px;
   border: none;
   border-radius: var(--space-12);
@@ -135,8 +135,8 @@
 }
 
 .nav__icon {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
 }
 
 .nav__icon-cut {
@@ -145,4 +145,87 @@
 
 .nav__tab--active .nav__icon-cut {
   fill: var(--color-blue);
+}
+
+/* Home: stage + status line, fixed height so the board does not jump */
+.home__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.home__status,
+.home__hint {
+  min-height: 1.5em;
+  color: var(--color-soft-gray);
+  font-size: var(--fs-body);
+  text-align: center;
+}
+
+.home__actions {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 52px;
+}
+
+.home__hint {
+  line-height: 52px;
+}
+
+.home__error {
+  max-width: 320px;
+  color: var(--color-red);
+  font-size: var(--fs-caption);
+  text-align: center;
+}
+
+/* Result overlay: blurs the whole screen behind it (confetti canvas stays above) */
+.result {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16);
+  background: rgba(10, 22, 40, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.result__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-16);
+  width: 100%;
+  max-width: 360px;
+  padding: var(--space-24) var(--space-16);
+  background: var(--color-surface);
+  border: 1px solid var(--color-blue);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft), 0 0 24px rgba(0, 163, 255, 0.25);
+  text-align: center;
+}
+
+.result__title {
+  font-size: 44px;
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+}
+
+.result__title--won {
+  color: var(--color-green);
+}
+
+.result__title--lost {
+  color: var(--color-red);
+}
+
+.result__detail {
+  color: var(--color-soft-gray);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
 }

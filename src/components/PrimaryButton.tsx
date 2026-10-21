@@ -1,6 +1,6 @@
-import type { ButtonHTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 
-export function PrimaryButton({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+export function PrimaryButton({ className, ...props }: ComponentProps<'button'>) {
   return (
     <button type="button" className={`btn-primary${className ? ` ${className}` : ''}`} {...props} />
   );

@@ -83,3 +83,46 @@
   box-shadow: 0 0 0 var(--board-gap) var(--color-charcoal);
   pointer-events: none;
 }
+
+/* Player-turn affordance and lit state */
+.board__pad[aria-disabled='true'] {
+  cursor: default;
+}
+
+.board--dimmed .board__pad {
+  filter: brightness(0.45) saturate(0.7);
+}
+
+.board__pad--lit,
+.board--dimmed .board__pad--lit {
+  filter: brightness(1.25) saturate(1.1);
+  position: relative;
+  z-index: 1;
+}
+
+.board__pad--green.board__pad--lit {
+  box-shadow: 0 0 28px 6px rgba(0, 210, 106, 0.75);
+}
+
+.board__pad--red.board__pad--lit {
+  box-shadow: 0 0 28px 6px rgba(255, 59, 48, 0.75);
+}
+
+.board__pad--yellow.board__pad--lit {
+  box-shadow: 0 0 28px 6px rgba(255, 214, 0, 0.75);
+}
+
+.board__pad--blue.board__pad--lit {
+  box-shadow: 0 0 28px 6px rgba(0, 163, 255, 0.75);
+}
+
+/* Keep the center disc above the glow of lit pads */
+.board__center {
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board__pad {
+    transition: none;
+  }
+}
