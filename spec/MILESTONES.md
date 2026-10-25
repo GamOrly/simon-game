@@ -101,7 +101,7 @@
 - [ ] `npm run build` מצליח, והתוצר שב-`dist/` נפתח ב-`npm run preview` תחת `/simon-game/` כמערכת עובדת (לא דף לבן), כולל היסטוריה ומחיקה, ללא שגיאות קונסול או 404.
 - [ ] לאחר Push ל-`main`, ה-Workflow ב-GitHub Actions עובר בדיקות ו-Build ומפרסם את האתר אוטומטית; `https://gamorly.github.io/simon-game/` נטען דרך HTTPS כמשחק עובד, ללא דף לבן ושגיאות 404. (נבדק אחרי ה-Push, שהוא גם שלב האישור.)
 
-## Milestone 5 – PWA ו-Offline
+## Milestone 5 – PWA ו-Offline ✅
 
 **שם ומטרה:** להפוך את המשחק השלם, שכבר מפורסם ב-GitHub Pages מ-Milestone 4, לאתר מובייל שניתן להתקנה במכשירים תומכים ושממשיך לעבוד Offline לאחר טעינה מוצלחת.
 

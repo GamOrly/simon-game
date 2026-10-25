@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- App icon (DESIGN.md §2.4, ADR-7): Simon board on the Background color, no text -->
+  <rect width="512" height="512" fill="#0A1628"/>
+  <circle cx="256" cy="256" r="204" fill="#0F0F0F"/>
+  <path d="M256 256 L56 256 A200 200 0 0 1 256 56 Z" fill="#00D26A"/>
+  <path d="M256 256 L256 56 A200 200 0 0 1 456 256 Z" fill="#FF3B30"/>
+  <path d="M256 256 L456 256 A200 200 0 0 1 256 456 Z" fill="#00A3FF"/>
+  <path d="M256 256 L256 456 A200 200 0 0 1 56 256 Z" fill="#FFD600"/>
+  <rect x="247" y="52" width="18" height="408" fill="#0F0F0F"/>
+  <rect x="52" y="247" width="408" height="18" fill="#0F0F0F"/>
+  <circle cx="256" cy="256" r="70" fill="#0F0F0F"/>
+  <circle cx="256" cy="256" r="56" fill="#12213A"/>
+</svg>
