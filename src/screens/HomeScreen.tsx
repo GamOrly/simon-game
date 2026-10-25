@@ -4,12 +4,12 @@ import { SimonBoard } from '../components/SimonBoard';
 import { MAX_ROUNDS } from '../game/constants';
 import type { Game } from '../game/useGame';
 
-type Props = { game: Game };
+type Props = { game: Game; saveFailed: boolean };
 
 const START_LABEL = 'התחל משחק';
 const RESUME_LABEL = 'המשך משחק';
 
-export function HomeScreen({ game }: Props) {
+export function HomeScreen({ game, saveFailed }: Props) {
   const { state, activeColor, resultVisible, audioError } = game;
   const { status } = state;
 
@@ -66,7 +66,12 @@ export function HomeScreen({ game }: Props) {
       </div>
 
       {resultVisible && (status === 'won' || status === 'lost') && (
-        <ResultDialog outcome={status} completedRounds={state.completedRounds} onConfirm={game.dismiss} />
+        <ResultDialog
+          outcome={status}
+          completedRounds={state.completedRounds}
+          saveFailed={saveFailed}
+          onConfirm={game.dismiss}
+        />
       )}
     </main>
   );

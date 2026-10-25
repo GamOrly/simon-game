@@ -229,3 +229,166 @@
   font-size: var(--fs-h2);
   font-weight: var(--fw-semibold);
 }
+
+/* History cards (About) */
+.history__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+}
+
+.history-card__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-card__rounds {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+}
+
+.history-card__outcome {
+  font-size: var(--fs-caption);
+}
+
+.history-card__outcome--win {
+  color: var(--color-green);
+}
+
+.history-card__outcome--loss {
+  color: #ff6b62;
+}
+
+.history-card__date {
+  flex-shrink: 0;
+  color: var(--color-soft-gray);
+  font-size: var(--fs-caption);
+}
+
+.history__actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Secondary button: muted surface with an outline */
+.btn-secondary {
+  width: 100%;
+  max-width: 320px;
+  min-height: 52px;
+  padding: var(--space-12) var(--space-24);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-white);
+  font-size: var(--fs-button);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-secondary:active {
+  filter: brightness(1.2);
+}
+
+.notice {
+  padding: var(--space-12);
+  border-radius: var(--space-12);
+  border: 1px solid var(--color-border);
+  font-size: var(--fs-caption);
+  text-align: center;
+}
+
+.notice--error {
+  color: #ff6b62;
+  background: rgba(255, 59, 48, 0.08);
+  border-color: rgba(255, 59, 48, 0.4);
+}
+
+.result__warning {
+  color: #ff6b62;
+  font-size: var(--fs-caption);
+}
+
+/* Delete confirmation: light card on a dark scrim (mockup) */
+.confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16);
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.confirm__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  width: 100%;
+  max-width: 340px;
+  padding: var(--space-24) var(--space-16) var(--space-16);
+  background: var(--color-white);
+  color: var(--color-charcoal);
+  border: 1px solid #d8dee8;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.confirm__title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+}
+
+.confirm__desc {
+  color: #4a5568;
+  font-size: var(--fs-body);
+}
+
+.confirm__actions {
+  display: flex;
+  gap: var(--space-12);
+  margin-top: var(--space-8);
+}
+
+.btn-danger,
+.btn-cancel {
+  flex: 1;
+  min-height: 48px;
+  border: none;
+  border-radius: var(--space-12);
+  font-size: var(--fs-button);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-danger {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+.btn-cancel {
+  background: #e6e9ef;
+  color: var(--color-charcoal);
+}
+
+.btn-danger:active,
+.btn-cancel:active {
+  filter: brightness(0.92);
+}

@@ -5,6 +5,7 @@ import { PrimaryButton } from './PrimaryButton';
 type Props = {
   outcome: 'won' | 'lost';
   completedRounds: number;
+  saveFailed: boolean;
   onConfirm: () => void;
 };
 
@@ -14,7 +15,7 @@ function completedText(n: number) {
   return n === 1 ? 'השלמת שלב אחד' : `השלמת ${n} שלבים`;
 }
 
-export function ResultDialog({ outcome, completedRounds, onConfirm }: Props) {
+export function ResultDialog({ outcome, completedRounds, saveFailed, onConfirm }: Props) {
   const confirmRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export function ResultDialog({ outcome, completedRounds, onConfirm }: Props) {
             <p className="result__detail">{completedText(completedRounds)}</p>
           </>
         )}
+        {saveFailed && <p className="result__warning">התוצאה לא נשמרה בהיסטוריה.</p>}
         <PrimaryButton ref={confirmRef} onClick={onConfirm}>
           אישור
         </PrimaryButton>

@@ -4,6 +4,8 @@ import { afterEach } from 'vitest';
 
 afterEach(() => {
   cleanup();
+  // Saved history must not leak between tests
+  localStorage.clear();
 });
 
 // jsdom does not implement scrolling

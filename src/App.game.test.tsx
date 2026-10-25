@@ -225,8 +225,8 @@ describe('full game', () => {
     expect(await watchPresentation(1, false)).toEqual(['yellow']);
     expect(sequence[0]).not.toBe('yellow');
 
-    // Active game state is never persisted
-    expect(storageWrite).not.toHaveBeenCalled();
+    // Active game state is never persisted; only the finished result is (history)
+    expect(storageWrite.mock.calls.map(([key]) => key)).toEqual(['simon.history.v1']);
     storageWrite.mockRestore();
   });
 
